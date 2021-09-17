@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace PeliculasAPI.Controllers
 {
     [Route("api/generos")]
-    public class GenerosController
+    public class GenerosController: ControllerBase
     {
 
         public IRepositorio _repositorio;
@@ -21,7 +21,7 @@ namespace PeliculasAPI.Controllers
         [HttpGet]   // api/generos
         [HttpGet("listado")]   // api/generos/listado
         [HttpGet("/listado")]   // /listado
-        public List<Genero> Get() {
+        public ActionResult<List<Genero>> Get() {
 
             var generos = _repositorio.ObtenerTodosLosGeneros();
 
@@ -29,38 +29,50 @@ namespace PeliculasAPI.Controllers
         }
 
         [HttpGet("{Id}")]   // api/generos/1
-        [HttpGet("GetGeneroPorId")]   // api/generos/GetGeneroPorId?id=1
-        public Genero Get(int Id)
+        public async Task<ActionResult<Genero>> Get(int Id)
         {
 
-            var generos = _repositorio.ObtenerGeneroPorId(Id);
-            return generos;
-        }
-        
-        [HttpGet("{Id:int}/{nombre=null}")]   // api/generos/1/oliver
-        public Genero Get(int Id, string nombre)
-        {
+            var genero = await _repositorio.ObtenerGeneroPorId(Id);
 
-            var generos = _repositorio.ObtenerGeneroPorId(Id);
-
-            if (generos == null) {
-                //return NotFound();
+            if (genero == null)
+            {
+                return NotFound();
             }
-            return generos;
+
+            //return Ok("Felipe");
+            //return Ok(DateTime.Now);
+            return genero;
+        }
+
+        [HttpGet("{Id:int}/{nombre=null}")]   // api/generos/1/oliver
+        [HttpGet("GetGeneroPorId")]   // api/generos/GetGeneroPorId?id=1
+        //public IActionResult Get(int Id, string nombre)        
+        public async Task<ActionResult<Genero>> Get(int Id, string nombre)
+        {
+
+            var genero = await _repositorio.ObtenerGeneroPorId(Id);
+
+            if (genero == null) {
+                return NotFound();
+            }
+
+            //return Ok("Felipe");
+            //return Ok(DateTime.Now);
+            return genero;
         }
 
         [HttpPost]
-        public void Post() { 
-        
+        public ActionResult Post() {
+            return NoContent();
         }
         
         [HttpPut]
-        public void Put() { 
-        
+        public ActionResult Put() {
+            return NoContent();
         }
         [HttpDelete]
-        public void Delete() { 
-        
+        public ActionResult Delete() {
+            return NoContent();
         }
 
     }
