@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using PeliculasAPI.Entidades;
 using PeliculasAPI.Repositorios;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace PeliculasAPI.Controllers
 {
     [Route("api/generos")]
+    [ApiController]
     public class GenerosController: ControllerBase
     {
 
@@ -18,8 +20,8 @@ namespace PeliculasAPI.Controllers
             _repositorio = repositorio;
         }
 
-        [HttpGet]   // api/generos
-        [HttpGet("listado")]   // api/generos/listado
+        [HttpGet]               // api/generos
+        [HttpGet("listado")]    // api/generos/listado
         [HttpGet("/listado")]   // /listado
         public ActionResult<List<Genero>> Get() {
 
@@ -28,28 +30,16 @@ namespace PeliculasAPI.Controllers
             return generos;
         }
 
-        [HttpGet("{Id}")]   // api/generos/1
-        public async Task<ActionResult<Genero>> Get(int Id)
-        {
-
-            var genero = await _repositorio.ObtenerGeneroPorId(Id);
-
-            if (genero == null)
-            {
-                return NotFound();
-            }
-
-            //return Ok("Felipe");
-            //return Ok(DateTime.Now);
-            return genero;
-        }
-
-        [HttpGet("{Id:int}/{nombre=null}")]   // api/generos/1/oliver
-        [HttpGet("GetGeneroPorId")]   // api/generos/GetGeneroPorId?id=1
+        //[HttpGet("{Id}")]   // api/generos/1
+        //[HttpGet("{Id:int}/{nombre=null}")]   // api/generos/1/oliver
+        [HttpGet("{Id:int}")]                   // api/generos/1
+        [HttpGet("GetGeneroPorId")]             // api/generos/GetGeneroPorId?id=1
         //public IActionResult Get(int Id, string nombre)        
-        public async Task<ActionResult<Genero>> Get(int Id, string nombre)
+        public async Task<ActionResult<Genero>> Get(int Id, [FromHeader]string nombre)
         {
-
+            //if (!ModelState.IsValid) {
+            //    return BadRequest(ModelState);
+            //}
             var genero = await _repositorio.ObtenerGeneroPorId(Id);
 
             if (genero == null) {
@@ -62,12 +52,23 @@ namespace PeliculasAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post() {
+        public ActionResult Post([FromBody] Genero genero) 
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+
             return NoContent();
         }
         
         [HttpPut]
-        public ActionResult Put() {
+        public ActionResult Put([FromBody] Genero genero)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             return NoContent();
         }
         [HttpDelete]
