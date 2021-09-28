@@ -19,95 +19,46 @@ namespace PeliculasAPI.Controllers
     public class GenerosController: ControllerBase
     {
 
-        private readonly IRepositorio _repositorio;
-        private readonly WeatherForecastController weatherForecastController;
         private readonly ILogger<GenerosController> logger;
 
-        public GenerosController(IRepositorio repositorio, WeatherForecastController weatherForecastController, ILogger<GenerosController> logger)
+        public GenerosController(ILogger<GenerosController> logger)
         {
-            this._repositorio = repositorio;
-            this.weatherForecastController = weatherForecastController;
             this.logger = logger;
         }
 
-        [HttpGet]               // api/generos
-        [HttpGet("listado")]    // api/generos/listado
-        [HttpGet("/listado")]   // /listado
-        //[ResponseCache(Duration = 60)]
-        [ServiceFilter(typeof(MiFiltroDeAccion))]
+        [HttpGet]
         public ActionResult<List<Genero>> Get() 
         {
 
-            logger.LogInformation("Vamos a mostrar los generos");
-
-            var generos = _repositorio.ObtenerTodosLosGeneros();
-
-            return generos;
-        }
-        
-        [HttpGet("guid")] // api/generos/guid
-        public ActionResult<Guid> GetGuid() {
-
-
-            return Ok(new 
-                    {
-                        Guid_GenerosController = _repositorio.ObtenerGuid(),
-                        Guid_WeatherForecastController = weatherForecastController.ObtenerGUIDWeatherForecastController()
-                    });
+            return new List<Genero>() { 
+                new Genero(){
+                    Id = 1,
+                    Nombre = "Comedia"
+                }
+            };
         }
 
-        //[HttpGet("{Id}")]   // api/generos/1
-        //[HttpGet("{Id:int}/{nombre=null}")]   // api/generos/1/oliver
-        [HttpGet("{Id:int}")]                   // api/generos/1
-        [HttpGet("GetGeneroPorId")]             // api/generos/GetGeneroPorId?id=1
-        //public IActionResult Get(int Id, string nombre)        
-        public async Task<ActionResult<Genero>> Get(int Id, [FromHeader]string nombre)
+        [HttpGet("{Id: int}")]
+        public async Task<ActionResult<Genero>> Get(int Id)
         {
-            //if (!ModelState.IsValid) {
-            //    return BadRequest(ModelState);
-            //}
-
-            logger.LogDebug($"Obteniendo un genero por id {Id}");
-
-            var genero = await _repositorio.ObtenerGeneroPorId(Id);
-
-            if (genero == null) {
-
-                throw new ApplicationException($"El genero de ID {Id} no fue encontrado");
-
-                logger.LogWarning($"No pudimos encontrar el genero de id {Id}");
-                return NotFound();
-            }
-
-            //return Ok("Felipe");
-            //return Ok(DateTime.Now);
-            return genero;
+            throw new NotImplementedException();
         }
 
         [HttpPost]
         public ActionResult Post([FromBody] Genero genero) 
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-
-            _repositorio.CrearGenero(genero);
-            return NoContent();
+            throw new NotImplementedException();
         }
         
         [HttpPut]
         public ActionResult Put([FromBody] Genero genero)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest(ModelState);
-            //}
-            return NoContent();
+            throw new NotImplementedException();
         }
+
         [HttpDelete]
         public ActionResult Delete() {
-            return NoContent();
+            throw new NotImplementedException();
         }
 
     }

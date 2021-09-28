@@ -34,11 +34,12 @@ namespace PeliculasAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-            services.AddResponseCaching();
+
+            //services.AddResponseCaching();
             //services.AddSingleton<IRepositorio, RepositorioEnMemoria>();
-            services.AddSingleton<IRepositorio, RepositorioEnMemoria>();
-            services.AddScoped<WeatherForecastController>();
-            services.AddTransient<MiFiltroDeAccion>();
+            //services.AddSingleton<IRepositorio, RepositorioEnMemoria>();
+            //services.AddScoped<WeatherForecastController>();
+            //services.AddTransient<MiFiltroDeAccion>();
             
             services.AddControllers(options => {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
@@ -51,35 +52,35 @@ namespace PeliculasAPI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.Use(async (context, next) =>
-            {
-                using (var swapStream = new MemoryStream()) {
-                    var respuestaOriginal = context.Response.Body;
-                    context.Response.Body = swapStream;
+            //app.Use(async (context, next) =>
+            //{
+            //    using (var swapStream = new MemoryStream()) {
+            //        var respuestaOriginal = context.Response.Body;
+            //        context.Response.Body = swapStream;
 
-                    await next.Invoke();
+            //        await next.Invoke();
 
-                    swapStream.Seek(0, SeekOrigin.Begin);
-                    string respuesta = new StreamReader(swapStream).ReadToEnd();
-                    swapStream.Seek(0, SeekOrigin.Begin);
+            //        swapStream.Seek(0, SeekOrigin.Begin);
+            //        string respuesta = new StreamReader(swapStream).ReadToEnd();
+            //        swapStream.Seek(0, SeekOrigin.Begin);
 
-                    await swapStream.CopyToAsync(respuestaOriginal);
-                    context.Response.Body = respuestaOriginal;
+            //        await swapStream.CopyToAsync(respuestaOriginal);
+            //        context.Response.Body = respuestaOriginal;
 
-                    logger.LogInformation(respuesta);
+            //        logger.LogInformation(respuesta);
 
-                }
-            });
+            //    }
+            //});
 
-            app.Map("/mapa1", (app) =>
-            {
-                app.Run(async context =>
-                {
-                    await context.Response.WriteAsync("Estoy interceptando el pipline");
-                });
-            });
+            //app.Map("/mapa1", (app) =>
+            //{
+            //    app.Run(async context =>
+            //    {
+            //        await context.Response.WriteAsync("Estoy interceptando el pipline");
+            //    });
+            //});
 
             if (env.IsDevelopment())
             {
@@ -92,7 +93,7 @@ namespace PeliculasAPI
 
             app.UseRouting();
 
-            app.UseResponseCaching();
+            //app.UseResponseCaching();
 
             app.UseAuthentication();
 
