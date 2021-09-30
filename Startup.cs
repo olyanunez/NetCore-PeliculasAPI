@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,6 +34,7 @@ namespace PeliculasAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             //services.AddResponseCaching();
@@ -43,6 +45,17 @@ namespace PeliculasAPI
             
             services.AddControllers(options => {
                 options.Filters.Add(typeof(FiltroDeExcepcion));
+            });
+
+            services.AddCors(options =>
+            {
+                var frontendUrl = Configuration.GetValue<string>("frontend_url");
+
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins(frontendUrl).AllowAnyMethod().AllowAnyHeader();
+                });
+
             });
 
             services.AddSwaggerGen(c =>
@@ -93,6 +106,7 @@ namespace PeliculasAPI
 
             app.UseRouting();
 
+            app.UseCors();
             //app.UseResponseCaching();
 
             app.UseAuthentication();
